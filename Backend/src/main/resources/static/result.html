@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>심리검사 결과</title>
+</head>
+<body>
+<h1>심리검사 결과</h1>
+
+<h2>결과 요약</h2>
+<p id="summary">결과를 불러오는 중입니다.</p>
+
+<h2>안내</h2>
+<p id="disclaimer"></p>
+
+<h2>객체탐지 원본 결과</h2>
+<pre id="raw"></pre>
+
+<button onclick="location.href='/'">처음으로</button>
+
+<script>
+const assessmentId =
+    new URLSearchParams(location.search).get("id");
+
+loadResult();
+
+async function loadResult() {
+    if (!assessmentId) {
+        document.getElementById("summary").textContent =
+            "검사 ID가 없습니다.";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            "/api/assessments/"
+            + encodeURIComponent(assessmentId)
+            + "/result"
+        );
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        const data = await response.json();
+
+        document.getElementById("summary").textContent =
+            data.summary;
+
+        document.getElementById("disclaimer").textContent =
+            data.disclaimer;
+
+        document.getElementById("raw").textContent =
+            JSON.stringify(data.detection, null, 2);
+    } catch (error) {
+        document.getElementById("summary").textContent =
+            "결과 조회 실패: " + error.message;
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>분석 중</title>
+</head>
+<body>
+<h1>심리검사 결과를 분석하고 있습니다.</h1>
+<p id="message">잠시 기다려주세요.</p>
+
+<script>
+const assessmentId =
+    new URLSearchParams(location.search).get("id");
+
+const message = document.getElementById("message");
+
+if (!assessmentId) {
+    message.textContent = "검사 ID가 없습니다.";
+} else {
+    checkStatus();
+}
+
+async function checkStatus() {
+    try {
+        const response = await fetch(
+            "/api/assessments/"
+            + encodeURIComponent(assessmentId)
+            + "/status"
+        );
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        const data = await response.json();
+        message.textContent = data.message;
+
+        if (data.status === "COMPLETED") {
+            location.href =
+                "/result.html?id="
+                + encodeURIComponent(assessmentId);
+            return;
+        }
+
+        if (data.status === "FAILED") {
+            return;
+        }
+
+        setTimeout(checkStatus, 1500);
+    } catch (error) {
+        message.textContent = "상태 확인 실패: " + error.message;
+    }
+}
+</script>
+</body>
+</html>

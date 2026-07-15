@@ -1,12 +1,12 @@
 package com.example.yolo_backend.service;
 
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -29,7 +29,7 @@ public class RoboflowService {
             "image/webp"
     );
 
-    private final HttpClient httpClient;
+    private final HttpClient httpClient = HttpClient.newHttpClient();
     private final JsonMapper jsonMapper;
     private final String apiKey;
     private final String modelId;
@@ -39,28 +39,38 @@ public class RoboflowService {
             @Value("${roboflow.api-key}") String apiKey,
             @Value("${roboflow.model-id}") String modelId
     ) {
-        this.httpClient = HttpClient.newHttpClient();
         this.jsonMapper = jsonMapper;
         this.apiKey = apiKey;
         this.modelId = modelId;
     }
 
     public JsonNode detect(MultipartFile image) {
-        validateImage(image);
+        try {
+            return detect(image.getBytes(), image.getContentType());
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "이미지를 읽을 수 없습니다.",
+                    e
+            );
+        }
+    }
+
+    public JsonNode detect(byte[] imageBytes, String contentType) {
+        validateImage(imageBytes, contentType);
 
         try {
             String base64Image = Base64.getEncoder()
-                    .encodeToString(image.getBytes());
-
-            String encodedApiKey = URLEncoder.encode(
-                    apiKey,
-                    StandardCharsets.UTF_8
-            );
+                    .encodeToString(imageBytes);
 
             String endpoint =
                     "https://serverless.roboflow.com/"
                             + modelId
-                            + "?api_key=" + encodedApiKey
+                            + "?api_key="
+                            + URLEncoder.encode(
+                            apiKey,
+                            StandardCharsets.UTF_8
+                    )
                             + "&confidence=0.4"
                             + "&format=json";
 
@@ -103,28 +113,29 @@ public class RoboflowService {
         } catch (IOException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_GATEWAY,
-                    "이미지 또는 Roboflow 응답을 처리하지 못했습니다.",
+                    "Roboflow 요청 또는 응답 처리에 실패했습니다.",
                     e
             );
         }
     }
 
-    private void validateImage(MultipartFile image) {
-        if (image == null || image.isEmpty()) {
+    private void validateImage(
+            byte[] imageBytes,
+            String contentType
+    ) {
+        if (imageBytes == null || imageBytes.length == 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "이미지 파일이 필요합니다."
             );
         }
 
-        if (image.getSize() > MAX_FILE_SIZE) {
+        if (imageBytes.length > MAX_FILE_SIZE) {
             throw new ResponseStatusException(
                     HttpStatus.PAYLOAD_TOO_LARGE,
                     "이미지는 최대 10MB까지 가능합니다."
             );
         }
-
-        String contentType = image.getContentType();
 
         if (contentType == null
                 || !ALLOWED_TYPES.contains(contentType)) {

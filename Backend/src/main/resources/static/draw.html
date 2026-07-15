@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 업로드</title>
+</head>
+<body>
+<h1>이미지 업로드</h1>
+
+<input type="file" id="image" accept="image/jpeg,image/png,image/webp">
+<br>
+<img id="preview" width="500">
+<br>
+<button onclick="completeAssessment()">완료</button>
+<p id="message"></p>
+
+<script>
+const input = document.getElementById("image");
+const preview = document.getElementById("preview");
+const message = document.getElementById("message");
+
+input.addEventListener("change", () => {
+    const file = input.files[0];
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+    }
+});
+
+async function completeAssessment() {
+    const file = input.files[0];
+
+    if (!file) {
+        alert("이미지를 선택해주세요.");
+        return;
+    }
+
+    message.textContent = "업로드 중...";
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+        const response = await fetch("/api/assessments", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        const data = await response.json();
+
+        location.href =
+            "/waiting.html?id="
+            + encodeURIComponent(data.assessmentId);
+    } catch (error) {
+        message.textContent = "요청 실패: " + error.message;
+    }
+}
+</script>
+</body>
+</html>
