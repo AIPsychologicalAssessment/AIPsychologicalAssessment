@@ -1,0 +1,66 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.canvas {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: crosshair;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    touch-action: none;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+}
+
+.toolbar {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px var(--color-border) inset;
+}
+
+.swatchActive {
+    border-color: var(--color-text);
+}
+
+.range {
+    margin-left: 8px;
+    accent-color: var(--color-sage);
+}
+
+.rangeLabel {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.clearButton {
+    margin-top: 12px;
+    align-self: flex-start;
+    padding: 8px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.clearButton:hover {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+}

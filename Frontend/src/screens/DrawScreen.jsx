@@ -4,6 +4,7 @@ import DrawingCanvas from "../components/DrawingCanvas";
 import ImageUploader from "../components/ImageUploader";
 import ModeToggle from "../components/ModeToggle";
 import PrimaryButton from "../components/PrimaryButton";
+import styles from "./DrawScreen.module.css";
 
 const TEST_NAMES = {
   house: "집 그리기 검사",
@@ -15,12 +16,11 @@ const TEST_NAMES = {
 function DrawScreen() {
   const { testId } = useParams();
   const navigate = useNavigate();
-  const [mode, setMode] = useState("draw"); // "draw" | "upload"
+  const [mode, setMode] = useState("draw");
   const [guideMessage, setGuideMessage] = useState("");
 
   const drawingRef = useRef(null);
   const uploadRef = useRef(null);
-
   const activeRef = mode === "draw" ? drawingRef : uploadRef;
 
   const handleModeChange = (nextMode) => {
@@ -37,15 +37,14 @@ function DrawScreen() {
       );
       return;
     }
-
     setGuideMessage("");
     const imageData = activeRef.current.getImageData();
     navigate(`/loading/${testId}`, { state: { imageData } });
   };
 
   return (
-    <div style={{ padding: 24, maxWidth: 500, margin: "0 auto" }}>
-      <h2>{TEST_NAMES[testId] ?? `${testId} 검사`}</h2>
+    <div className={styles.container}>
+      <h2 className={styles.title}>{TEST_NAMES[testId] ?? `${testId} 검사`}</h2>
 
       <ModeToggle mode={mode} onChange={handleModeChange} />
 
@@ -55,13 +54,9 @@ function DrawScreen() {
         <ImageUploader ref={uploadRef} />
       )}
 
-      {guideMessage && (
-        <p style={{ color: "#B94A48", fontSize: 13, marginTop: 8 }}>
-          {guideMessage}
-        </p>
-      )}
+      {guideMessage && <p className={styles.guideMessage}>{guideMessage}</p>}
 
-      <div style={{ marginTop: 16 }}>
+      <div className={styles.submitArea}>
         <PrimaryButton onClick={handleSubmit}>분석 시작하기</PrimaryButton>
       </div>
     </div>

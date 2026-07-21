@@ -1,0 +1,41 @@
+:root {
+    /* 기존 캔버스 팔레트를 브랜드 컬러로 확장 */
+    --color-primary: #262A26;
+    --color-primary-light: #3D423D;
+    --color-sage: #4F6D5D;
+    --color-gold: #C99A3F;
+    --color-blue: #6A85A3;
+    --color-red: #B94A48;
+
+    --color-bg: #FAF8F4;
+    --color-surface: #FFFFFF;
+    --color-border: #E6E1D8;
+    --color-text: #2B2B28;
+    --color-text-muted: #8A8578;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+
+    --shadow-card: 0 4px 16px rgba(38, 42, 38, 0.06);
+    --shadow-card-hover: 0 8px 24px rgba(38, 42, 38, 0.1);
+
+    --font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
+        "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+button {
+    font-family: inherit;
+}

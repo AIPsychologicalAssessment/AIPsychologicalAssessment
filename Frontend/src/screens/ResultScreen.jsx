@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import mockAnalysisResults from "../data/mockAnalysisResults";
+import styles from "./ResultScreen.module.css";
 
 const TEST_NAMES = {
   house: "집 그리기 검사",
@@ -13,15 +14,16 @@ function ResultScreen() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 정상 흐름(LoadingScreen을 거침)이면 state.result 사용,
-  // 새로고침 등 예외 상황이면 mock 데이터로 보정
   const result = location.state?.result ?? mockAnalysisResults[testId];
 
   if (!result) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className={styles.container}>
         <p>결과를 불러올 수 없습니다.</p>
-        <button onClick={() => navigate(`/draw/${testId}`)}>
+        <button
+          className={styles.retryButton}
+          onClick={() => navigate(`/draw/${testId}`)}
+        >
           다시 검사하기
         </button>
       </div>
@@ -29,18 +31,12 @@ function ResultScreen() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 600, margin: "0 auto" }}>
-      <h2>{TEST_NAMES[testId] ?? `${testId} 검사`} 결과</h2>
+    <div className={styles.container}>
+      <h2 className={styles.title}>
+        {TEST_NAMES[testId] ?? `${testId} 검사`} 결과
+      </h2>
 
-      <p
-        style={{
-          fontSize: 12,
-          color: "#888",
-          background: "#f5f5f5",
-          padding: 10,
-          borderRadius: 6,
-        }}
-      >
+      <p className={styles.disclaimer}>
         ※ 본 결과는 AI 기반 참고용 분석이며, 전문적인 심리 진단을 대체하지
         않습니다.
       </p>
@@ -49,54 +45,62 @@ function ResultScreen() {
         <img
           src={result.imageData}
           alt="분석한 그림"
-          style={{
-            width: "100%",
-            maxWidth: 400,
-            border: "1px solid #ccc",
-            borderRadius: 8,
-            marginTop: 16,
-          }}
+          className={styles.resultImage}
         />
       )}
 
-      <section style={{ marginTop: 20 }}>
-        <h3>전체 심리 분석 요약</h3>
-        <p>{result.summary}</p>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>전체 심리 분석 요약</h3>
+        <p className={styles.text}>{result.summary}</p>
       </section>
 
-      <section style={{ marginTop: 20 }}>
-        <h3>그림에서 관찰된 특징</h3>
-        <ul>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>그림에서 관찰된 특징</h3>
+        <ul className={styles.list}>
           {result.features.map((f, i) => (
             <li key={i}>{f}</li>
           ))}
         </ul>
       </section>
 
-      <section style={{ marginTop: 20 }}>
-        <h3>성향 분석</h3>
-        <p>{result.tendency}</p>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>성향 분석</h3>
+        <p className={styles.text}>{result.tendency}</p>
       </section>
 
-      <section style={{ marginTop: 20 }}>
-        <h3>감정 상태</h3>
-        <p>감정 키워드: {result.emotion.keywords.join(", ")}</p>
-        <p>정서 안정 지수: {result.emotion.stabilityScore}</p>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>감정 상태</h3>
+        <div className={styles.emotionRow}>
+          {result.emotion.keywords.map((k) => (
+            <span key={k} className={styles.tag}>
+              {k}
+            </span>
+          ))}
+        </div>
+        <div className={styles.scoreBar}>
+          <div
+            className={styles.scoreFill}
+            style={{ width: `${result.emotion.stabilityScore}%` }}
+          />
+        </div>
+        <p className={styles.scoreLabel}>
+          정서 안정 지수 {result.emotion.stabilityScore}
+        </p>
       </section>
 
-      <section style={{ marginTop: 20 }}>
-        <h3>심리적 해석</h3>
-        <p>{result.interpretation}</p>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>심리적 해석</h3>
+        <p className={styles.text}>{result.interpretation}</p>
       </section>
 
-      <section style={{ marginTop: 20 }}>
-        <h3>종합 상담 및 조언</h3>
-        <p>{result.advice}</p>
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>종합 상담 및 조언</h3>
+        <p className={styles.text}>{result.advice}</p>
       </section>
 
-      <div style={{ marginTop: 24 }}>
-        <button onClick={() => navigate("/")}>메인으로</button>
-      </div>
+      <button className={styles.homeButton} onClick={() => navigate("/")}>
+        메인으로
+      </button>
     </div>
   );
 }

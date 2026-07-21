@@ -1,19 +1,11 @@
-function PrimaryButton({ children, onClick, disabled, style }) {
+import styles from "./PrimaryButton.module.css";
+
+function PrimaryButton({ children, onClick, disabled, className = "" }) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      style={{
-        width: "100%",
-        padding: 12,
-        border: "none",
-        borderRadius: 6,
-        background: disabled ? "#ccc" : "#262A26",
-        color: "#fff",
-        fontSize: 15,
-        cursor: disabled ? "not-allowed" : "pointer",
-        ...style,
-      }}
+      className={`${styles.button} ${className}`}
     >
       {children}
     </button>

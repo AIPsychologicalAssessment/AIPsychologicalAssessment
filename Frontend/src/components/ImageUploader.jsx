@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import styles from "./ImageUploader.module.css";
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 const MAX_FILE_SIZE_MB = 10;
@@ -45,33 +46,18 @@ const ImageUploader = forwardRef(function ImageUploader(_, ref) {
   return (
     <div>
       {!preview && (
-        <label
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            maxWidth: 400,
-            height: 200,
-            border: "2px dashed #ccc",
-            borderRadius: 8,
-            cursor: "pointer",
-            color: "#888",
-            fontSize: 14,
-            boxSizing: "border-box",
-            textAlign: "center",
-            padding: 16,
-          }}
-        >
-          이미지를 선택해주세요
-          <br />
-          (PNG / JPG / WEBP, 10MB 이하)
+        <label className={styles.dropzone}>
+          <span className={styles.dropzoneIcon}>+</span>
+          <span className={styles.dropzoneText}>이미지를 선택해주세요</span>
+          <span className={styles.dropzoneHint}>
+            PNG / JPG / WEBP, 10MB 이하
+          </span>
           <input
             ref={fileInputRef}
             type="file"
             accept="image/png, image/jpeg, image/webp"
             onChange={handleFileChange}
-            style={{ display: "none" }}
+            className={styles.input}
           />
         </label>
       )}
@@ -81,25 +67,15 @@ const ImageUploader = forwardRef(function ImageUploader(_, ref) {
           <img
             src={preview}
             alt="업로드한 그림 미리보기"
-            style={{
-              width: "100%",
-              maxWidth: 400,
-              maxHeight: 400,
-              objectFit: "contain",
-              border: "1px solid #ccc",
-              borderRadius: 8,
-              display: "block",
-            }}
+            className={styles.preview}
           />
-          <div style={{ marginTop: 12 }}>
-            <button onClick={handleReset}>다시 선택</button>
-          </div>
+          <button className={styles.resetButton} onClick={handleReset}>
+            다시 선택
+          </button>
         </div>
       )}
 
-      {error && (
-        <p style={{ color: "#B94A48", fontSize: 13, marginTop: 8 }}>{error}</p>
-      )}
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 });

@@ -1,0 +1,22 @@
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 20px;
+}
+
+.guideMessage {
+    color: var(--color-red);
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.submitArea {
+    margin-top: 20px;
+}

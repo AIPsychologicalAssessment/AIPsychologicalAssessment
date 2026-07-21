@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from "react";
+import styles from "./DrawingCanvas.module.css";
 
 const COLORS = ["#262A26", "#4F6D5D", "#C99A3F", "#6A85A3", "#B94A48"];
 
@@ -24,7 +25,6 @@ const DrawingCanvas = forwardRef(function DrawingCanvas(_, ref) {
     ctx.lineJoin = "round";
   }, []);
 
-  // DrawScreen에서 ref로 접근해 이미지 데이터를 꺼내거나 비어있는지 확인할 수 있도록 노출
   useImperativeHandle(ref, () => ({
     getImageData: () => canvasRef.current.toDataURL("image/png"),
     isEmpty: () => !hasDrawing,
@@ -35,10 +35,7 @@ const DrawingCanvas = forwardRef(function DrawingCanvas(_, ref) {
     const rect = canvasRef.current.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
-    };
+    return { x: clientX - rect.left, y: clientY - rect.top };
   };
 
   const startDraw = (e) => {
@@ -74,21 +71,12 @@ const DrawingCanvas = forwardRef(function DrawingCanvas(_, ref) {
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <canvas
         ref={canvasRef}
         width={400}
         height={400}
-        style={{
-          border: "1px solid #ccc",
-          cursor: "crosshair",
-          maxWidth: "100%",
-          width: "100%",
-          height: "auto",
-          aspectRatio: "1 / 1",
-          touchAction: "none",
-          background: "#fff",
-        }}
+        className={styles.canvas}
         onMouseDown={startDraw}
         onMouseMove={draw}
         onMouseUp={stopDraw}
@@ -98,28 +86,14 @@ const DrawingCanvas = forwardRef(function DrawingCanvas(_, ref) {
         onTouchEnd={stopDraw}
       />
 
-      <div
-        style={{
-          marginTop: 12,
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          flexWrap: "wrap",
-        }}
-      >
+      <div className={styles.toolbar}>
         {COLORS.map((c) => (
           <button
             key={c}
             onClick={() => setColor(c)}
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: c,
-              border: color === c ? "2px solid #333" : "1px solid #ccc",
-              cursor: "pointer",
-              flexShrink: 0,
-            }}
+            className={`${styles.swatch} ${color === c ? styles.swatchActive : ""}`}
+            style={{ background: c }}
+            aria-label={`색상 ${c}`}
           />
         ))}
 
@@ -129,14 +103,14 @@ const DrawingCanvas = forwardRef(function DrawingCanvas(_, ref) {
           max="15"
           value={lineWidth}
           onChange={(e) => setLineWidth(Number(e.target.value))}
-          style={{ marginLeft: 12 }}
+          className={styles.range}
         />
-        <span style={{ fontSize: 12 }}>{lineWidth}px</span>
+        <span className={styles.rangeLabel}>{lineWidth}px</span>
       </div>
 
-      <div style={{ marginTop: 12 }}>
-        <button onClick={clearCanvas}>지우기</button>
-      </div>
+      <button className={styles.clearButton} onClick={clearCanvas}>
+        지우기
+      </button>
     </div>
   );
 });

@@ -1,0 +1,39 @@
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 40px;
+}
+
+.spinner {
+    margin: 0 auto 32px;
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--color-border);
+    border-top: 5px solid var(--color-sage);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.description {
+    color: var(--color-text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
